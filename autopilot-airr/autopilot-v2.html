@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AUTOPILOT v2 — airr by OneOrigin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080d;
+  --s1:#0d0f1a;
+  --s2:#111422;
+  --border:#1c1f32;
+  --a1:#c8f135;
+  --a2:#4f6bff;
+  --a3:#ff5c5c;
+  --a4:#34d399;
+  --text:#dde1f0;
+  --muted:#4a5070;
+  --card:#0f1120;
+}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 50% -10%,rgba(79,107,255,0.12),transparent);pointer-events:none;z-index:0}
+
+.wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:28px 20px}
+
+/* ── TOP BAR ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.brand{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--a1)}
+.brand span{color:var(--text);opacity:.4}
+.pill{display:flex;align-items:center;gap:7px;padding:6px 14px;border-radius:100px;background:rgba(200,241,53,.07);border:1px solid rgba(200,241,53,.18);font-size:11px;color:var(--a1);letter-spacing:.8px;text-transform:uppercase}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--a1);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center}
+.stat-n{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--a1);line-height:1}
+.stat-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:5px}
+
+/* ── CONFIGURE PANEL ── */
+.config{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:28px;margin-bottom:24px}
+.config-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:4px;display:flex;align-items:center;gap:10px}
+.config-sub{font-size:12px;color:var(--muted);margin-bottom:24px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:640px){.grid2,.grid3{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
+label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+input,select,textarea{width:100%;background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'Outfit',sans-serif;font-size:13px;outline:none;transition:border-color .2s;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:rgba(200,241,53,.35);box-shadow:0 0 0 3px rgba(200,241,53,.05)}
+select option{background:var(--s1)}
+
+/* ── BIG LAUNCH BUTTON ── */
+.launch-btn{width:100%;margin-top:20px;padding:16px;background:var(--a1);color:#000;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;border:none;border-radius:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:12px}
+.launch-btn:hover:not(:disabled){background:#d8ff45;transform:translateY(-2px);box-shadow:0 10px 30px rgba(200,241,53,.2)}
+.launch-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* ── PIPELINE HEADER ── */
+.pipeline-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;margin-top:8px}
+.pipeline-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px}
+.pipeline-controls{display:flex;gap:10px}
+.btn-sm{padding:8px 16px;border-radius:8px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-outline:hover{border-color:var(--a1);color:var(--a1)}
+.btn-green{background:var(--a1);color:#000}
+.btn-green:hover:not(:disabled){background:#d8ff45}
+.btn-green:disabled{opacity:.4;cursor:not-allowed}
+.btn-blue{background:rgba(79,107,255,.12);color:var(--a2);border:1px solid rgba(79,107,255,.25)}
+.btn-blue:hover:not(:disabled){background:rgba(79,107,255,.22)}
+.btn-blue:disabled{opacity:.4;cursor:not-allowed}
+
+/* ── PROGRESS BAR ── */
+.progress-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;display:none}
+.progress-wrap.visible{display:block}
+.progress-label{font-size:12px;color:var(--muted);margin-bottom:10px;display:flex;justify-content:space-between}
+.progress-track{height:6px;background:var(--border);border-radius:100px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--a2),var(--a1));border-radius:100px;transition:width .4s ease}
+.progress-status{font-size:12px;color:var(--a1);margin-top:10px;min-height:18px}
+
+/* ── PROSPECT CARDS ── */
+#pipeline{display:flex;flex-direction:column;gap:16px}
+
+.prospect-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color .2s;animation:slideIn .3s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.prospect-card:hover{border-color:rgba(200,241,53,.15)}
+
+.card-top{display:flex;align-items:center;gap:16px;padding:18px 20px;cursor:pointer}
+.avatar{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:18px;flex-shrink:0}
+.card-info{flex:1;min-width:0}
+.card-name{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-role{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.badge{padding:2px 9px;border-radius:100px;font-size:10px;font-weight:500;letter-spacing:.3px}
+.badge-li{background:rgba(79,107,255,.12);color:var(--a2);border:1px solid rgba(79,107,255,.2)}
+.badge-em{background:rgba(200,241,53,.08);color:var(--a1);border:1px solid rgba(200,241,53,.18)}
+.badge-hot{background:rgba(255,92,92,.1);color:var(--a3);border:1px solid rgba(255,92,92,.2)}
+.badge-warm{background:rgba(255,165,0,.08);color:#ffaa3b;border:1px solid rgba(255,165,0,.2)}
+
+.card-status{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.status-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px}
+.s-pending{background:var(--border)}
+.s-running{background:rgba(79,107,255,.12);animation:pulseBg 1s infinite}
+@keyframes pulseBg{0%,100%{background:rgba(79,107,255,.12)}50%{background:rgba(79,107,255,.22)}}
+.s-done{background:rgba(200,241,53,.1)}
+.s-error{background:rgba(255,92,92,.1)}
+
+.card-expand{padding:0 20px 20px;display:none}
+.card-expand.open{display:block}
+
+.tab-row{display:flex;gap:6px;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:10px}
+.tab{padding:6px 14px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--muted);transition:all .2s;letter-spacing:.3px;text-transform:uppercase}
+.tab.active{background:var(--s1);color:var(--a1);border:1px solid rgba(200,241,53,.2)}
+
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+.msg-box{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:16px;font-size:13px;line-height:1.75;color:var(--text);white-space:pre-wrap;position:relative;min-height:60px}
+.msg-box.loading{color:var(--muted);display:flex;align-items:center;gap:10px}
+.msg-box.loading::after{content:'';width:12px;height:12px;border:2px solid var(--border);border-top-color:var(--a1);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.copy-btn{position:absolute;top:10px;right:10px;padding:4px 10px;background:var(--border);border:none;border-radius:6px;color:var(--muted);font-size:10px;cursor:pointer;font-family:'Outfit',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.5px;transition:all .2s}
+.copy-btn:hover{background:var(--a1);color:#000}
+
+.signal-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.signal{display:flex;align-items:flex-start;gap:8px;font-size:12px;line-height:1.5}
+.signal::before{content:'→';color:var(--a1);flex-shrink:0;font-weight:700}
+
+.section-label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--a1);margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.section-label::before{content:'';width:4px;height:4px;background:var(--a1);border-radius:50%}
+
+.reply-input-wrap{margin-top:12px}
+.reply-input-wrap textarea{min-height:70px;font-size:13px}
+.reply-btn{margin-top:8px;padding:9px 18px;background:rgba(79,107,255,.12);border:1px solid rgba(79,107,255,.25);color:var(--a2);border-radius:8px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.reply-btn:hover{background:rgba(79,107,255,.22)}
+
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);font-size:13px}
+.empty-icon{font-size:40px;margin-bottom:12px}
+
+/* channel pills in card */
+.ch-toggle{display:flex;gap:6px;margin-bottom:12px}
+.ch-pill{padding:5px 14px;border-radius:100px;font-size:11px;font-weight:600;cursor:pointer;border:none;transition:all .2s;background:var(--border);color:var(--muted)}
+.ch-pill.active{background:rgba(79,107,255,.15);color:var(--a2);border:1px solid rgba(79,107,255,.3)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="brand">AUTO<span>PILOT</span> <span style="font-size:13px;font-family:'Outfit';font-weight:400;opacity:.5;letter-spacing:0">for airr by OneOrigin</span></div>
+    <div class="pill"><div class="dot"></div>Engine Ready</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat"><div class="stat-n" id="st-gen">0</div><div class="stat-l">Prospects</div></div>
+    <div class="stat"><div class="stat-n" id="st-res">0</div><div class="stat-l">Researched</div></div>
+    <div class="stat"><div class="stat-n" id="st-msg">0</div><div class="stat-l">Messages Ready</div></div>
+    <div class="stat"><div class="stat-n" id="st-rep">0</div><div class="stat-l">Replies Handled</div></div>
+  </div>
+
+  <!-- CONFIG -->
+  <div class="config">
+    <div class="config-title">⚙️ Campaign Settings</div>
+    <div class="config-sub">Set once. AUTOPILOT handles everything else — research, icebreakers, and full outreach for every prospect.</div>
+
+    <div class="grid2">
+      <div>
+        <label>Target Job Titles</label>
+        <input id="c-titles" value="Director of Admissions, VP Enrollment Management, University Registrar, Director of Enrollment Technology"/>
+      </div>
+      <div>
+        <label>Institution Type</label>
+        <input id="c-industry" value="Universities, Liberal Arts Colleges, Community Colleges, Graduate Schools"/>
+      </div>
+    </div>
+
+    <div class="grid3" style="margin-top:14px">
+      <div>
+        <label>Institution Size</label>
+        <select id="c-size">
+          <option>Small (under 5,000 students)</option>
+          <option selected>Mid (5,000–20,000 students)</option>
+          <option>Large (20,000–50,000 students)</option>
+          <option>All sizes</option>
+        </select>
+      </div>
+      <div>
+        <label>Geography</label>
+        <input id="c-geo" value="United States"/>
+      </div>
+      <div>
+        <label>Number of Prospects</label>
+        <select id="c-count">
+          <option value="5">5 prospects</option>
+          <option value="10" selected>10 prospects</option>
+          <option value="15">15 prospects</option>
+          <option value="20">20 prospects</option>
+          <option value="25">25 prospects</option>
+          <option value="30">30 prospects</option>
+          <option value="40">40 prospects</option>
+          <option value="50">50 prospects</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <label>Buying Intent Signals to Target</label>
+      <input id="c-signals" value="Using Slate/Salesforce CRM, running Ellucian Banner/Colleague, hiring admissions staff, announced enrollment growth targets, digitization/modernization initiative"/>
+    </div>
+
+    <div style="margin-top:14px">
+      <label>Outreach Channels</label>
+      <div style="display:flex;gap:10px;margin-top:6px" id="ch-select">
+        <button class="ch-pill active" onclick="toggleCh(this,'linkedin')">💼 LinkedIn</button>
+        <button class="ch-pill active" onclick="toggleCh(this,'email')">✉️ Email</button>
+      </div>
+    </div>
+
+    <button class="launch-btn" id="launch-btn" onclick="launchAutopilot()">
+      🚀 LAUNCH AUTOPILOT
+    </button>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="progress-label">
+      <span id="prog-label">Initializing...</span>
+      <span id="prog-pct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="progress-status" id="prog-status"></div>
+  </div>
+
+  <!-- PIPELINE -->
+  <div class="pipeline-header" id="pipeline-header" style="display:none">
+    <div class="pipeline-title">📋 Prospect Pipeline</div>
+    <div class="pipeline-controls">
+      <button class="btn-sm btn-outline" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="btn-sm btn-blue" id="btn-run-all" onclick="runAllResearch()" disabled>▶ Run Research on All</button>
+      <button class="btn-sm btn-green" id="btn-msg-all" onclick="runAllMessages()" disabled>⚡ Generate All Messages</button>
+    </div>
+  </div>
+
+  <div id="pipeline">
+    <div class="empty-state" id="empty-state">
+      <div class="empty-icon">🎯</div>
+      Configure your campaign above and hit Launch Autopilot.<br/>All research and outreach will be generated automatically.
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════════
+const PROFILE = {
+  name: 'Syed Sirajuddin',
+  role: 'Account Executive',
+  company: 'OneOrigin',
+  product: 'airr',
+  tone: 'consultative and direct',
+  value: `airr, powered by OneOrigin's unified AI engine Sia™, transforms how universities handle transcript processing. It eliminates manual tasks, achieves near-100% accuracy, cuts evaluation time by 85%, and handles peak-season volume effortlessly. Integrates natively with Salesforce, Slate, Ellucian, Oracle PeopleSoft, and Jenzabar. ~1M transcripts processed in 2024. 10X ROI. The result: admissions and registrar teams stop drowning in paperwork and focus on student success.`,
+  icp: 'Directors of Admissions, VP Enrollment, University Registrars, Enrollment Tech leaders at US higher education institutions'
+};
+
+let prospects = [];
+let channels = ['linkedin','email'];
+let stats = {gen:0, res:0, msg:0, rep:0};
+
+// ═══════════════════════════════════════════════
+// CHANNEL TOGGLE
+// ═══════════════════════════════════════════════
+function toggleCh(btn, ch) {
+  btn.classList.toggle('active');
+  if (btn.classList.contains('active')) {
+    if (!channels.includes(ch)) channels.push(ch);
+  } else {
+    channels = channels.filter(c => c !== ch);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════
+function incStat(k) {
+  stats[k]++;
+  document.getElementById('st-'+k).textContent = stats[k];
+}
+function setStat(k,v) {
+  stats[k] = v;
+  document.getElementById('st-'+k).textContent = v;
+}
+
+// ═══════════════════════════════════════════════
+// PROGRESS
+// ═══════════════════════════════════════════════
+function setProgress(pct, label, status) {
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = Math.round(pct) + '%';
+  document.getElementById('prog-label').textContent = label;
+  if (status !== undefined) document.getElementById('prog-status').textContent = status;
+}
+
+// ═══════════════════════════════════════════════
+// CORE AI CALL
+// ═══════════════════════════════════════════════
+// ─────────────────────────────────────────────────────────
+// API KEY CONFIG
+// When running on GitHub Pages / Vercel / locally outside Claude:
+// Replace the empty string below with your Anthropic API key.
+// Get one at: https://console.anthropic.com
+// Leave empty when running inside Claude.ai (auth is handled automatically).
+// ─────────────────────────────────────────────────────────
+const ANTHROPIC_API_KEY = ''; // ← paste your key here for external hosting
+
+async function ai(prompt, maxTokens = 900) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (ANTHROPIC_API_KEY) {
+    headers['x-api-key'] = ANTHROPIC_API_KEY;
+    headers['anthropic-version'] = '2023-06-01';
+    headers['anthropic-dangerous-direct-browser-access'] = 'true';
+  }
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: maxTokens,
+      messages: [{ role:'user', content: prompt }]
+    })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data.content?.map(b => b.text||'').join('') || '';
+}
+
+function profileCtx() {
+  return `You are a sales AI assistant for ${PROFILE.name}, ${PROFILE.role} at ${PROFILE.company}.
+Product: ${PROFILE.product} — ${PROFILE.value}
+Tone: ${PROFILE.tone}
+ICP: ${PROFILE.icp}`;
+}
+
+// ═══════════════════════════════════════════════
+// STEP 1: GENERATE PROSPECTS (batched + deduplicated)
+// ═══════════════════════════════════════════════
+
+// Dedup key: lowercase "name|institution"
+function dedupKey(p) {
+  return `${p.name.toLowerCase().trim()}|${p.institution.toLowerCase().trim()}`;
+}
+
+function deduplicateBatch(existing, incoming) {
+  const seen = new Set(existing.map(dedupKey));
+  const unique = [];
+  for (const p of incoming) {
+    const k = dedupKey(p);
+    if (!seen.has(k)) { seen.add(k); unique.push(p); }
+  }
+  return unique;
+}
+
+async function generateBatch(count, existingNames, batchNum) {
+  const titles = document.getElementById('c-titles').value;
+  const industry = document.getElementById('c-industry').value;
+  const size = document.getElementById('c-size').value;
+  const geo = document.getElementById('c-geo').value;
+  const signals = document.getElementById('c-signals').value;
+
+  const exclusion = existingNames.length > 0
+    ? `\nIMPORTANT — Do NOT repeat any of these already-generated prospects (names or institutions):\n${existingNames.map(n=>`- ${n}`).join('\n')}\nGenerate completely different people and institutions only.\n`
+    : '';
+
+  const prompt = `${profileCtx()}
+
+Generate exactly ${count} fictional but realistic prospect profiles for ${PROFILE.name} to target with airr. This is batch ${batchNum} — make sure ALL names and institutions are unique and different from any previous batches.
+${exclusion}
+Criteria:
+- Titles: ${titles}
+- Institution type: ${industry}
+- Institution size: ${size}
+- Geography: ${geo}
+- Buying signals: ${signals}
+
+Vary the geography across different US states and regions. Use diverse, realistic names.
+
+Return ONLY a valid JSON array. No markdown, no explanation. Each object:
+{
+  "name": "Full Name",
+  "title": "Job Title",
+  "institution": "Institution Name",
+  "location": "City, State",
+  "size": "enrollment figure e.g. 12,000 students",
+  "currentStack": "e.g. Slate CRM, Ellucian Banner",
+  "signals": ["signal 1", "signal 2", "signal 3"],
+  "temperature": "hot|warm",
+  "channel": "linkedin|email|both"
+}`;
+
+  const raw = await ai(prompt, 2500);
+  const clean = raw.replace(/```json|```/g,'').trim();
+  const s = clean.indexOf('[');
+  const e = clean.lastIndexOf(']');
+  return JSON.parse(clean.slice(s, e+1));
+}
+
+async function generateProspects() {
+  const totalNeeded = parseInt(document.getElementById('c-count').value);
+  const BATCH_SIZE = 10; // safe per-call limit for quality + token budget
+  let allProspects = [];
+  let batchNum = 1;
+  let maxAttempts = Math.ceil(totalNeeded / BATCH_SIZE) + 3; // extra retries for dedup losses
+  let attempts = 0;
+
+  while (allProspects.length < totalNeeded && attempts < maxAttempts) {
+    const stillNeeded = totalNeeded - allProspects.length;
+    const batchSize = Math.min(BATCH_SIZE, stillNeeded + 2); // request a couple extra to cover dedup losses
+    const existingNames = allProspects.map(p => `${p.name} at ${p.institution}`);
+
+    setProgress(
+      (allProspects.length / totalNeeded) * 20,
+      `Generating batch ${batchNum}...`,
+      `🔍 ${allProspects.length}/${totalNeeded} prospects found so far...`
+    );
+
+    try {
+      const batch = await generateBatch(batchSize, existingNames, batchNum);
+      const unique = deduplicateBatch(allProspects, batch);
+      allProspects = [...allProspects, ...unique];
+      batchNum++;
+    } catch(e) {
+      // If a batch fails, try again
+    }
+    attempts++;
+  }
+
+  // Final trim to exact count requested
+  return allProspects.slice(0, totalNeeded);
+}
+
+// ═══════════════════════════════════════════════
+// STEP 2: RESEARCH ONE PROSPECT
+// ═══════════════════════════════════════════════
+async function researchOne(p) {
+  const prompt = `${profileCtx()}
+
+Research this higher education prospect and produce a sharp personalization brief.
+
+Prospect: ${p.name}, ${p.title} at ${p.institution}
+Location: ${p.location} | Size: ${p.size}
+Current Stack: ${p.currentStack}
+Known Signals: ${p.signals.join('; ')}
+
+Return a JSON object only. No markdown:
+{
+  "brief": "2-sentence prospect summary",
+  "pains": ["pain 1", "pain 2", "pain 3"],
+  "hook": "The single sharpest personalization angle to open with"
+}`;
+
+  const raw = await ai(prompt, 500);
+  const clean = raw.replace(/```json|```/g,'').trim();
+  const s = clean.indexOf('{');
+  const e = clean.lastIndexOf('}');
+  return JSON.parse(clean.slice(s, e+1));
+}
+
+// ═══════════════════════════════════════════════
+// STEP 3: GENERATE MESSAGES
+// ═══════════════════════════════════════════════
+async function generateMessages(p) {
+  const msgs = {};
+  const chs = channels.length > 0 ? channels : ['linkedin'];
+
+  for (const ch of chs) {
+    if (ch === 'linkedin') {
+      const prompt = `${profileCtx()}
+
+Write a LinkedIn outreach sequence for this prospect. Be human, direct, insight-led. No buzzwords.
+
+Prospect: ${p.name}, ${p.title} at ${p.institution} (${p.size}, ${p.location})
+Stack: ${p.currentStack}
+Hook: ${p.research?.hook || p.signals[0]}
+Their pain: ${p.research?.pains?.[0] || 'manual transcript processing bottlenecks'}
+
+Write TWO messages:
+
+1. CONNECTION REQUEST (under 280 characters — count carefully):
+[connection message here]
+
+2. FOLLOW-UP DM (after they connect, 3-4 lines max):
+[follow-up message here]
+
+Label each clearly with "CONNECTION REQUEST:" and "FOLLOW-UP DM:" on separate lines.`;
+      msgs.linkedin = await ai(prompt, 400);
+    }
+
+    if (ch === 'email') {
+      const prompt = `${profileCtx()}
+
+Write a cold email sequence for this prospect. Punchy subject, insight-led body, one soft CTA.
+
+Prospect: ${p.name}, ${p.title} at ${p.institution} (${p.size}, ${p.location})
+Stack: ${p.currentStack}
+Hook: ${p.research?.hook || p.signals[0]}
+Their pain: ${p.research?.pains?.[0] || 'manual transcript processing bottlenecks'}
+
+Write TWO emails:
+
+EMAIL 1 — FIRST TOUCH:
+Subject: [subject line]
+Body: [3-4 lines + CTA]
+
+EMAIL 2 — FOLLOW-UP (3 days later):
+Subject: [subject line]
+Body: [2-3 lines + CTA]
+
+Label clearly with "EMAIL 1 — FIRST TOUCH:" and "EMAIL 2 — FOLLOW-UP:" on separate lines.`;
+      msgs.email = await ai(prompt, 500);
+    }
+  }
+  return msgs;
+}
+
+// ═══════════════════════════════════════════════
+// LAUNCH AUTOPILOT — FULL PIPELINE
+// ═══════════════════════════════════════════════
+async function launchAutopilot() {
+  const btn = document.getElementById('launch-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ RUNNING...';
+
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('progress-wrap').classList.add('visible');
+  document.getElementById('pipeline-header').style.display = 'flex';
+  document.getElementById('pipeline').innerHTML = '';
+
+  prospects = [];
+  setStat('gen',0); setStat('res',0); setStat('msg',0); setStat('rep',0);
+
+  const count = parseInt(document.getElementById('c-count').value);
+  const totalSteps = 1 + count * 2; // generate phase + research + messages per prospect
+  let step = 0;
+
+  function pct() { return Math.min(99, (step / totalSteps) * 100); }
+
+  try {
+    // ── STEP 1: Generate all prospects
+    setProgress(0, 'Generating prospect list...', '🔍 Finding your ideal targets...');
+    const raw = await generateProspects();
+    prospects = raw;
+    step = 1;
+    setProgress(pct(), `Generated ${prospects.length} prospects`, '✅ Prospect list ready');
+    setStat('gen', prospects.length);
+
+    // Render all prospect cards (skeleton)
+    prospects.forEach((p, i) => {
+      p.id = i;
+      p.researchStatus = 'pending';
+      p.msgStatus = 'pending';
+      renderCard(p, i);
+    });
+
+    document.getElementById('btn-run-all').disabled = false;
+    document.getElementById('btn-msg-all').disabled = false;
+
+    // ── STEP 2+3: Research + Messages for each prospect sequentially
+    for (let i = 0; i < prospects.length; i++) {
+      const p = prospects[i];
+      setProgress(pct(), `Processing ${i+1}/${prospects.length}: ${p.name}`, `🧠 Researching ${p.name} at ${p.institution}...`);
+      setCardStatus(i, 'running', '🔬');
+
+      // Research
+      try {
+        p.research = await researchOne(p);
+        p.researchStatus = 'done';
+        step++;
+        setProgress(pct(), `Researched ${p.name}`, `✍️ Writing messages for ${p.name}...`);
+        incStat('res');
+        updateCardResearch(i);
+      } catch(e) {
+        p.researchStatus = 'error';
+        step++;
+      }
+
+      // Messages
+      try {
+        p.messages = await generateMessages(p);
+        p.msgStatus = 'done';
+        step++;
+        setProgress(pct(), `Messages ready for ${p.name}`, `✅ ${i+1}/${prospects.length} complete`);
+        incStat('msg');
+        updateCardMessages(i);
+        setCardStatus(i, 'done', '✅');
+      } catch(e) {
+        p.msgStatus = 'error';
+        step++;
+        setCardStatus(i, 'error', '❌');
+      }
+    }
+
+    setProgress(100, 'Autopilot complete!', `🚀 ${prospects.length} prospects fully processed — all messages ready to send!`);
+    btn.disabled = false;
+    btn.textContent = '🔄 RE-RUN AUTOPILOT';
+
+  } catch(err) {
+    setProgress(0, 'Error occurred', '⚠️ ' + err.message);
+    btn.disabled = false;
+    btn.textContent = '🚀 LAUNCH AUTOPILOT';
+  }
+}
+
+// ── RUN RESEARCH ON ALL (manual trigger)
+async function runAllResearch() {
+  for (let i = 0; i < prospects.length; i++) {
+    const p = prospects[i];
+    if (p.researchStatus === 'done') continue;
+    setCardStatus(i, 'running', '🔬');
+    try {
+      p.research = await researchOne(p);
+      p.researchStatus = 'done';
+      incStat('res');
+      updateCardResearch(i);
+      setCardStatus(i, 'done', '✅');
+    } catch(e) { setCardStatus(i, 'error', '❌'); }
+  }
+}
+
+async function runAllMessages() {
+  for (let i = 0; i < prospects.length; i++) {
+    const p = prospects[i];
+    if (p.msgStatus === 'done') continue;
+    setCardStatus(i, 'running', '✍️');
+    try {
+      p.messages = await generateMessages(p);
+      p.msgStatus = 'done';
+      incStat('msg');
+      updateCardMessages(i);
+      setCardStatus(i, 'done', '✅');
+    } catch(e) { setCardStatus(i, 'error', '❌'); }
+  }
+}
+
+// ═══════════════════════════════════════════════
+// RENDER CARD
+// ═══════════════════════════════════════════════
+const avatarColors = [
+  ['#4f6bff','#1a2060'],['#c8f135','#2a3a00'],['#ff5c5c','#3a1010'],
+  ['#34d399','#0a2a1e'],['#f59e0b','#2a1e00'],['#a78bfa','#1e1040']
+];
+
+function renderCard(p, i) {
+  const [fg, bg] = avatarColors[i % avatarColors.length];
+  const initials = p.name.split(' ').map(w=>w[0]).join('').slice(0,2);
+  const card = document.createElement('div');
+  card.className = 'prospect-card';
+  card.id = `card-${i}`;
+
+  card.innerHTML = `
+    <div class="card-top" onclick="toggleExpand(${i})">
+      <div class="avatar" style="background:${bg};color:${fg}">${initials}</div>
+      <div class="card-info">
+        <div class="card-name">${p.name}</div>
+        <div class="card-role">${p.title} · ${p.institution}</div>
+        <div class="card-badges">
+          <span class="badge ${p.temperature==='hot'?'badge-hot':'badge-warm'}">${p.temperature==='hot'?'🔥 Hot':'🌡 Warm'}</span>
+          ${p.channel==='both'?'<span class="badge badge-li">LinkedIn</span><span class="badge badge-em">Email</span>':p.channel==='linkedin'?'<span class="badge badge-li">LinkedIn</span>':'<span class="badge badge-em">Email</span>'}
+          <span class="badge" style="background:rgba(100,100,120,.15);color:var(--muted)">${p.size}</span>
+        </div>
+      </div>
+      <div class="card-status">
+        <div class="status-icon s-pending" id="status-${i}">⏳</div>
+      </div>
+    </div>
+    <div class="card-expand" id="expand-${i}">
+      <div class="tab-row">
+        <button class="tab active" onclick="switchTab(${i},'signals',this)">Signals</button>
+        <button class="tab" onclick="switchTab(${i},'research',this)">Research</button>
+        ${channels.includes('linkedin') ? `<button class="tab" onclick="switchTab(${i},'linkedin',this)">LinkedIn</button>` : ''}
+        ${channels.includes('email') ? `<button class="tab" onclick="switchTab(${i},'email',this)">Email</button>` : ''}
+        <button class="tab" onclick="switchTab(${i},'reply',this)">Reply Handler</button>
+      </div>
+
+      <div class="tab-content active" id="tab-${i}-signals">
+        <div class="section-label">Buying Intent Signals</div>
+        <div class="signal-list">${p.signals.map(s=>`<div class="signal">${s}</div>`).join('')}</div>
+        <div class="section-label">Current Stack</div>
+        <div style="font-size:13px;color:var(--muted)">${p.currentStack}</div>
+      </div>
+
+      <div class="tab-content" id="tab-${i}-research">
+        <div class="msg-box loading" id="res-${i}">Waiting for research...</div>
+      </div>
+
+      ${channels.includes('linkedin') ? `
+      <div class="tab-content" id="tab-${i}-linkedin">
+        <div class="msg-box loading" id="li-${i}">Waiting for messages...</div>
+      </div>` : ''}
+
+      ${channels.includes('email') ? `
+      <div class="tab-content" id="tab-${i}-email">
+        <div class="msg-box loading" id="em-${i}">Waiting for messages...</div>
+      </div>` : ''}
+
+      <div class="tab-content" id="tab-${i}-reply">
+        <div class="section-label">Handle a Reply</div>
+        <div class="reply-input-wrap">
+          <textarea id="reply-input-${i}" placeholder="Paste the prospect's reply here..."></textarea>
+          <button class="reply-btn" onclick="handleReply(${i})">🤖 Generate AI Response</button>
+        </div>
+        <div id="reply-out-${i}" style="margin-top:12px"></div>
+      </div>
+    </div>`;
+
+  document.getElementById('pipeline').appendChild(card);
+}
+
+function toggleExpand(i) {
+  const el = document.getElementById(`expand-${i}`);
+  el.classList.toggle('open');
+}
+
+function switchTab(i, name, btn) {
+  document.querySelectorAll(`#expand-${i} .tab-content`).forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll(`#expand-${i} .tab`).forEach(t=>t.classList.remove('active'));
+  document.getElementById(`tab-${i}-${name}`).classList.add('active');
+  btn.classList.add('active');
+}
+
+function setCardStatus(i, state, icon) {
+  const el = document.getElementById(`status-${i}`);
+  el.className = `status-icon s-${state}`;
+  el.textContent = icon;
+}
+
+function updateCardResearch(i) {
+  const p = prospects[i];
+  const el = document.getElementById(`res-${i}`);
+  if (!el) return;
+  el.className = 'msg-box';
+  el.style.position = 'relative';
+
+  let html = `<div class="copy-btn" onclick="copyText(this, 'res-content-${i}')">Copy</div>`;
+  html += `<div id="res-content-${i}">`;
+  html += `<div class="section-label">Brief</div><p style="font-size:13px;margin-bottom:12px;line-height:1.7">${p.research.brief}</p>`;
+  html += `<div class="section-label">Pain Points</div><div class="signal-list">${p.research.pains.map(x=>`<div class="signal">${x}</div>`).join('')}</div>`;
+  html += `<div class="section-label" style="margin-top:10px">Best Hook</div><p style="font-size:13px;color:var(--a1);font-weight:600">${p.research.hook}</p>`;
+  html += `</div>`;
+  el.innerHTML = html;
+}
+
+function updateCardMessages(i) {
+  const p = prospects[i];
+
+  if (p.messages?.linkedin) {
+    const el = document.getElementById(`li-${i}`);
+    if (el) {
+      el.className = 'msg-box';
+      el.style.position = 'relative';
+      el.innerHTML = `<div class="copy-btn" onclick="copyText(this,'li-content-${i}')">Copy</div><div id="li-content-${i}" style="white-space:pre-wrap;font-size:13px;line-height:1.75">${p.messages.linkedin}</div>`;
+    }
+  }
+
+  if (p.messages?.email) {
+    const el = document.getElementById(`em-${i}`);
+    if (el) {
+      el.className = 'msg-box';
+      el.style.position = 'relative';
+      el.innerHTML = `<div class="copy-btn" onclick="copyText(this,'em-content-${i}')">Copy</div><div id="em-content-${i}" style="white-space:pre-wrap;font-size:13px;line-height:1.75">${p.messages.email}</div>`;
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════
+// REPLY HANDLER
+// ═══════════════════════════════════════════════
+async function handleReply(i) {
+  const p = prospects[i];
+  const reply = document.getElementById(`reply-input-${i}`).value.trim();
+  if (!reply) { alert('Paste a reply first.'); return; }
+
+  const outEl = document.getElementById(`reply-out-${i}`);
+  outEl.innerHTML = '<div class="msg-box loading">Crafting response...</div>';
+
+  const prompt = `${profileCtx()}
+
+You're handling a reply in an ongoing conversation about airr.
+
+Prospect: ${p.name}, ${p.title} at ${p.institution}
+Their stack: ${p.currentStack}
+Their reply: "${reply}"
+
+1. Detect intent (interested/objection/question/stalling/not interested)
+2. Write the perfect response — human, direct, max 4 lines
+3. Move toward a meeting if appropriate
+
+Write ONLY the response message.`;
+
+  try {
+    const text = await ai(prompt, 300);
+    outEl.innerHTML = `
+      <div class="section-label">Your AI Response</div>
+      <div class="msg-box" style="position:relative">
+        <div class="copy-btn" onclick="navigator.clipboard.writeText(this.nextElementSibling.textContent);this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)">Copy</div>
+        <div style="white-space:pre-wrap;font-size:13px;line-height:1.75">${text}</div>
+      </div>`;
+    incStat('rep');
+  } catch(e) {
+    outEl.innerHTML = `<div style="color:var(--a3);font-size:12px">Error: ${e.message}</div>`;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// COPY
+// ═══════════════════════════════════════════════
+function copyText(btn, contentId) {
+  const text = document.getElementById(contentId)?.textContent || '';
+  navigator.clipboard.writeText(text);
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy', 1500);
+}
+
+// ═══════════════════════════════════════════════
+// EXPORT CSV
+// ═══════════════════════════════════════════════
+function exportCSV() {
+  if (!prospects.length) return;
+  const rows = [['Name','Title','Institution','Location','Size','Stack','Temperature','Hook','LinkedIn Msg','Email Msg']];
+  prospects.forEach(p => {
+    rows.push([
+      p.name, p.title, p.institution, p.location, p.size, p.currentStack, p.temperature,
+      p.research?.hook || '',
+      (p.messages?.linkedin || '').replace(/\n/g,' '),
+      (p.messages?.email || '').replace(/\n/g,' ')
+    ]);
+  });
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'airr-prospects.csv';
+  a.click();
+}
+</script>
+</body>
+</html>
