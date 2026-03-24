@@ -1,0 +1,31 @@
+// Better-T-Stack
+//
+// Website: https://www.better-t-stack.dev/
+// Stack Builder: https://www.better-t-stack.dev/new
+// Analytics: https://www.better-t-stack.dev/analytics
+// Showcase: https://www.better-t-stack.dev/showcase
+// Sponsor: https://github.com/sponsors/AmanVarshney01
+//
+// Add new addons with: pnpm dlx create-better-t-stack add
+// This file is safe to delete
+
+{
+  "$schema": "https://r2.better-t-stack.dev/schema.json",
+  "version": "3.25.5",
+  "createdAt": "2026-03-18T21:30:12.401Z",
+  "reproducibleCommand": "pnpm create better-t-stack@latest my-better-t-app --frontend next --backend fastify --runtime node --database sqlite --orm drizzle --api trpc --auth none --payments none --addons nx skills mcp --examples ai --db-setup turso --web-deploy none --server-deploy none --git --package-manager pnpm --install",
+  "database": "sqlite",
+  "orm": "drizzle",
+  "backend": "fastify",
+  "runtime": "node",
+  "frontend": ["next"],
+  "addons": ["nx", "skills", "mcp"],
+  "examples": ["ai"],
+  "auth": "none",
+  "payments": "none",
+  "packageManager": "pnpm",
+  "dbSetup": "turso",
+  "api": "trpc",
+  "webDeploy": "none",
+  "serverDeploy": "none",
+}

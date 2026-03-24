@@ -1,105 +1,112 @@
-# autopilot-airr
+# AUTOPILOT — AI Outreach Command Center
+### for airr by OneOrigin
 
-This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines React, TanStack Router, Hono, TRPC, and more.
+> Generate prospects, research them, write personalized LinkedIn + Email outreach, handle replies — all automatically. Zero copy-paste.
 
-## Features
+---
 
-- **TypeScript** - For type safety and improved developer experience
-- **TanStack Router** - File-based routing with full type safety
-- **TailwindCSS** - Utility-first CSS for rapid UI development
-- **Shared UI package** - shadcn/ui primitives live in `packages/ui`
-- **Hono** - Lightweight, performant server framework
-- **tRPC** - End-to-end type-safe APIs
-- **Bun** - Runtime environment
-- **Drizzle** - TypeScript-first ORM
-- **SQLite/Turso** - Database engine
-- **Authentication** - Better-Auth
-- **Turborepo** - Optimized monorepo build system
+## 🚀 Live Demo
 
-## Getting Started
+Deploy via GitHub Pages — see setup below.
 
-First, install the dependencies:
+---
 
-```bash
-npm install
-```
+## ✨ What It Does
 
-## Database Setup
+| Feature | Description |
+|---|---|
+| 🎯 Prospect Generation | Generates up to 50 targeted higher-ed prospects with buying intent signals |
+| 🧠 Auto Research | Researches each prospect — pain points, brief, personalization hook |
+| ✍️ Message Writing | Writes LinkedIn connection + DM + cold email sequences per prospect |
+| 💬 Reply Handler | Paste any prospect reply → AI responds instantly in your voice |
+| 📊 Deduplication | Batched generation with hard dedup — no repeated names or institutions |
+| ⬇️ CSV Export | Export all prospects + messages to CSV |
 
-This project uses SQLite with Drizzle ORM.
+---
 
-1. Start the local SQLite database (optional):
-
-```bash
-npm run db:local
-```
-
-2. Update your `.env` file in the `apps/server` directory with the appropriate connection details if needed.
-
-3. Apply the schema to your database:
-
-```bash
-npm run db:push
-```
-
-Then, run the development server:
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3001](http://localhost:3001) in your browser to see the web application.
-The API is running at [http://localhost:3000](http://localhost:3000).
-
-## UI Customization
-
-React web apps in this stack share shadcn/ui primitives through `packages/ui`.
-
-- Change design tokens and global styles in `packages/ui/src/styles/globals.css`
-- Update shared primitives in `packages/ui/src/components/*`
-- Adjust shadcn aliases or style config in `packages/ui/components.json` and `apps/web/components.json`
-
-### Add more shared components
-
-Run this from the project root to add more primitives to the shared UI package:
-
-```bash
-npx shadcn@latest add accordion dialog popover sheet table -c packages/ui
-```
-
-Import shared components like this:
-
-```tsx
-import { Button } from "@autopilot-airr/ui/components/button";
-```
-
-### Add app-specific blocks
-
-If you want to add app-specific blocks instead of shared primitives, run the shadcn CLI from `apps/web`.
-
-## Project Structure
+## 📁 Files
 
 ```
-autopilot-airr/
-├── apps/
-│   ├── web/         # Frontend application (React + TanStack Router)
-│   └── server/      # Backend API (Hono, TRPC)
-├── packages/
-│   ├── ui/          # Shared shadcn/ui components and styles
-│   ├── api/         # API layer / business logic
-│   ├── auth/        # Authentication configuration & logic
-│   └── db/          # Database schema & queries
+autopilot-v2.html   → Main app (single file, runs in any browser)
+index.html          → GitHub Pages entry point (identical to above)
+README.md           → This file
 ```
 
-## Available Scripts
+---
 
-- `npm run dev`: Start all applications in development mode
-- `npm run build`: Build all applications
-- `npm run dev:web`: Start only the web application
-- `npm run dev:server`: Start only the server
-- `npm run check-types`: Check TypeScript types across all apps
-- `npm run db:push`: Push schema changes to database
-- `npm run db:generate`: Generate database client/types
-- `npm run db:migrate`: Run database migrations
-- `npm run db:studio`: Open database studio UI
-- `npm run db:local`: Start the local SQLite database
+## ⚙️ Setup
+
+### Option 1 — Run Locally
+Just open `autopilot-v2.html` in any browser. No install needed.
+
+### Option 2 — GitHub Pages (Free Hosting)
+
+1. Push this repo to GitHub
+2. Go to **Settings → Pages**
+3. Source: `Deploy from branch` → `main` → `/ (root)`
+4. Click **Save**
+5. Your app will be live at: `https://YOUR_USERNAME.github.io/autopilot-airr`
+
+### Option 3 — Vercel (One Click)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
+
+1. Import this GitHub repo into Vercel
+2. No build settings needed — it's a static HTML file
+3. Live in 30 seconds
+
+---
+
+## 🔑 Powered By
+
+- **Anthropic Claude API** — all AI generation runs client-side via the API
+- **No backend required** — pure HTML/CSS/JS, single file
+- **No API key needed in code** — Claude.ai handles auth when run inside Claude
+
+> ⚠️ **Note:** When running outside Claude.ai (e.g. GitHub Pages), you'll need to add your Anthropic API key. See below.
+
+---
+
+## 🔧 Adding Your API Key (for external hosting)
+
+Open `autopilot-v2.html` and find the `ai()` function (~line 310). Add your key to the headers:
+
+```javascript
+async function ai(prompt, maxTokens = 900) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': 'YOUR_ANTHROPIC_API_KEY_HERE',   // ← add this
+      'anthropic-version': '2023-06-01',              // ← add this
+      'anthropic-dangerous-direct-browser-access': 'true' // ← add this
+    },
+    ...
+  });
+}
+```
+
+Get your API key at: [console.anthropic.com](https://console.anthropic.com)
+
+---
+
+## 👤 Built For
+
+**Syed Sirajuddin** — Account Executive, OneOrigin  
+Selling **airr** — AI-powered transcript processing for higher education  
+Target market: US universities, admissions & registrar teams
+
+---
+
+## 📊 Product Context (airr)
+
+- 85% faster transcript evaluations
+- 100% accuracy via AI + human oversight
+- 70% scalability during peak admissions
+- 10X ROI
+- ~1M transcripts processed in 2024
+- Integrates with: Salesforce, Slate, Ellucian, Oracle PeopleSoft, Jenzabar
+
+---
+
+*Built with Claude by Anthropic*
